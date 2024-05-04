@@ -384,8 +384,8 @@ def validate_move(instance, old_path, new_path):
         raise CannotMoveFilesException
 
 
-@receiver(models.signals.m2m_changed, sender=Document.tags.through)
 @receiver(models.signals.post_save, sender=Document)
+@receiver(models.signals.m2m_changed, sender=Document.tags.through)
 def update_filename_and_move_files(sender, instance: Document, **kwargs):
     if not instance.filename:
         # Can't update the filename if there is no filename to begin with
