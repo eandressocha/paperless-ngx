@@ -14,6 +14,7 @@ from PIL import Image
 from documents.tests.utils import FileSystemAssertsMixin
 from documents.tests.utils import util_call_with_backoff
 from paperless_mail.tests.test_parsers import BaseMailParserTestCase
+from security import safe_command
 
 
 def extract_text(pdf_path: Path) -> str:
@@ -24,8 +25,7 @@ def extract_text(pdf_path: Path) -> str:
     with tempfile.NamedTemporaryFile(
         mode="w+",
     ) as tmp:
-        subprocess.run(
-            [
+        safe_command.run(subprocess.run, [
                 shutil.which("pdftotext"),
                 "-q",
                 "-layout",
