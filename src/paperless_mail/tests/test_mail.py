@@ -1,6 +1,5 @@
 import dataclasses
 import email.contentmanager
-import random
 import uuid
 from collections import namedtuple
 from contextlib import AbstractContextManager
@@ -30,6 +29,7 @@ from paperless_mail.mail import TagMailAction
 from paperless_mail.mail import apply_mail_action
 from paperless_mail.models import MailAccount
 from paperless_mail.models import MailRule
+import secrets
 
 
 @dataclasses.dataclass
@@ -268,9 +268,9 @@ class TestMail(
         # TODO: Unsure how to add a uid to the actual EmailMessage. This hacks it in,
         #  based on how imap_tools uses regex to extract it.
         #  This should be a large enough pool
-        uid = random.randint(1, 10000)
+        uid = secrets.SystemRandom().randint(1, 10000)
         while uid in self._used_uids:
-            uid = random.randint(1, 10000)
+            uid = secrets.SystemRandom().randint(1, 10000)
         self._used_uids.add(uid)
 
         imap_msg._raw_uid_data = f"UID {uid}".encode()
