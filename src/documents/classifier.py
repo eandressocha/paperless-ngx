@@ -13,6 +13,7 @@ from django.conf import settings
 
 from documents.models import Document
 from documents.models import MatchingModel
+import fickling
 
 logger = logging.getLogger("paperless.classifier")
 
@@ -85,7 +86,7 @@ class DocumentClassifier:
         # Catch warnings for processing
         with warnings.catch_warnings(record=True) as w:
             with open(settings.MODEL_FILE, "rb") as f:
-                schema_version = pickle.load(f)
+                schema_version = fickling.load(f)
 
                 if schema_version != self.FORMAT_VERSION:
                     raise IncompatibleClassifierVersionError(
@@ -93,16 +94,16 @@ class DocumentClassifier:
                     )
                 else:
                     try:
-                        self.last_doc_change_time = pickle.load(f)
-                        self.last_auto_type_hash = pickle.load(f)
+                        self.last_doc_change_time = fickling.load(f)
+                        self.last_auto_type_hash = fickling.load(f)
 
-                        self.data_vectorizer = pickle.load(f)
-                        self.tags_binarizer = pickle.load(f)
+                        self.data_vectorizer = fickling.load(f)
+                        self.tags_binarizer = fickling.load(f)
 
-                        self.tags_classifier = pickle.load(f)
-                        self.correspondent_classifier = pickle.load(f)
-                        self.document_type_classifier = pickle.load(f)
-                        self.storage_path_classifier = pickle.load(f)
+                        self.tags_classifier = fickling.load(f)
+                        self.correspondent_classifier = fickling.load(f)
+                        self.document_type_classifier = fickling.load(f)
+                        self.storage_path_classifier = fickling.load(f)
                     except Exception as err:
                         raise ClassifierModelCorruptError from err
 
