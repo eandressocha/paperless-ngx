@@ -16,6 +16,7 @@ from paperless.config import OcrConfig
 from paperless.models import ArchiveFileChoices
 from paperless.models import CleanChoices
 from paperless.models import ModeChoices
+from security import safe_command
 
 
 class NoTextFoundException(Exception):
@@ -91,8 +92,7 @@ class RasterisedDocumentParser(DocumentParser):
             return im.mode in ("RGBA", "LA")
 
     def remove_alpha(self, image_path: str):
-        subprocess.run(
-            [
+        safe_command.run(subprocess.run, [
                 settings.CONVERT_BINARY,
                 "-alpha",
                 "off",
