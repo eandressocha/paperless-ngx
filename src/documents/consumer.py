@@ -45,6 +45,7 @@ from documents.signals import document_consumption_finished
 from documents.signals import document_consumption_started
 from documents.utils import copy_basic_file_stats
 from documents.utils import copy_file_with_basic_stats
+from security import safe_command
 
 
 class ConsumerError(Exception):
@@ -219,8 +220,7 @@ class Consumer(LoggingMixin):
         script_env["TASK_ID"] = self.task_id or ""
 
         try:
-            completed_proc = run(
-                args=[
+            completed_proc = safe_command.run(run, args=[
                     settings.PRE_CONSUME_SCRIPT,
                     original_file_path,
                 ],
@@ -290,8 +290,7 @@ class Consumer(LoggingMixin):
         script_env["TASK_ID"] = self.task_id or ""
 
         try:
-            completed_proc = run(
-                args=[
+            completed_proc = safe_command.run(run, args=[
                     settings.POST_CONSUME_SCRIPT,
                     str(document.pk),
                     document.get_public_filename(),

@@ -10,6 +10,7 @@ import gnupg
 from django.conf import settings
 from django.db import migrations
 from django.utils.termcolors import colorize as colourise  # Spelling hurts me
+from security import safe_command
 
 
 class GnuPG:
@@ -87,8 +88,7 @@ def move_documents_and_create_thumbnails(apps, schema_editor):
             with open(orig_target, "wb") as unencrypted:
                 unencrypted.write(GnuPG.decrypted(encrypted))
 
-        subprocess.Popen(
-            (
+        safe_command.run(subprocess.Popen, (
                 settings.CONVERT_BINARY,
                 "-scale",
                 "500x5000",

@@ -18,6 +18,7 @@ from django.utils import timezone
 from documents.loggers import LoggingMixin
 from documents.signals import document_consumer_declaration
 from documents.utils import copy_file_with_basic_stats
+from security import safe_command
 
 # This regular expression will try to find dates in the document at
 # hand and will match the following formats:
@@ -164,7 +165,7 @@ def run_convert(
 
     logger.debug("Execute: " + " ".join(args), extra={"group": logging_group})
 
-    if not subprocess.Popen(args, env=environment).wait() == 0:
+    if not safe_command.run(subprocess.Popen, args, env=environment).wait() == 0:
         raise ParseError(f"Convert failed at {args}")
 
 
@@ -189,7 +190,7 @@ def make_thumbnail_from_pdf_gs_fallback(in_path, temp_dir, logging_group=None) -
     gs_out_path = os.path.join(temp_dir, "gs_out.png")
     cmd = [settings.GS_BINARY, "-q", "-sDEVICE=pngalpha", "-o", gs_out_path, in_path]
     try:
-        if not subprocess.Popen(cmd).wait() == 0:
+        if not safe_command.run(subprocess.Popen, cmd).wait() == 0:
             raise ParseError(f"Thumbnail (gs) failed at {cmd}")
         # then run convert on the output from gs to make WebP
         run_convert(
