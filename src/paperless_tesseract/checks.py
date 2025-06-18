@@ -5,11 +5,11 @@ from django.conf import settings
 from django.core.checks import Error
 from django.core.checks import Warning
 from django.core.checks import register
+from security import safe_command
 
 
 def get_tesseract_langs():
-    proc = subprocess.run(
-        [shutil.which("tesseract"), "--list-langs"],
+    proc = safe_command.run(subprocess.run, [shutil.which("tesseract"), "--list-langs"],
         capture_output=True,
     )
 

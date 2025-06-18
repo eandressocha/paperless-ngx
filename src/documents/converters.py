@@ -6,6 +6,7 @@ from django.conf import settings
 from PIL import Image
 
 from documents.utils import copy_basic_file_stats
+from security import safe_command
 
 
 def convert_from_tiff_to_pdf(tiff_path: Path, target_directory: Path) -> Path:
@@ -23,8 +24,7 @@ def convert_from_tiff_to_pdf(tiff_path: Path, target_directory: Path) -> Path:
         # Note the save into the temp folder, so as not to trigger a new
         # consume
         scratch_image = target_directory / tiff_path.name
-        run(
-            [
+        safe_command.run(run, [
                 settings.CONVERT_BINARY,
                 "-alpha",
                 "off",
