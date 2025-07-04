@@ -1,7 +1,6 @@
 import shutil
 import tempfile
 from collections.abc import Iterable
-from random import randint
 
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import User
@@ -14,6 +13,7 @@ from documents.models import Document
 from documents.models import DocumentType
 from documents.models import Tag
 from documents.signals import document_consumption_finished
+import secrets
 
 
 class _TestMatchingBase(TestCase):
@@ -27,7 +27,7 @@ class _TestMatchingBase(TestCase):
     ):
         for klass in (Tag, Correspondent, DocumentType):
             instance = klass.objects.create(
-                name=str(randint(10000, 99999)),
+                name=str(secrets.SystemRandom().randint(10000, 99999)),
                 match=match_text,
                 matching_algorithm=getattr(klass, match_algorithm),
                 is_insensitive=not case_sensitive,
